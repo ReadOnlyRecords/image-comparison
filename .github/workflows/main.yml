@@ -1,0 +1,48 @@
+name: Docker
+
+on:
+  push:
+    tags: [ "*" ]
+    branches:
+      - 'main'
+  pull_request:
+    branches: [ "**" ]
+
+env:
+  # Use docker.io for Docker Hub if empty
+  REGISTRY: docker.io
+  IMAGE_NAME: ${{ github.repository }}
+  SHA: ${{ github.event.pull_request.head.sha || github.event.after }}
+  # Use `latest` as the tag to compare to if empty, assuming that it's already pushed
+  COMPARE_TAG: latest
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      pull-requests: write
+
+    steps:
+
+      - name: Log into Docker Hub
+        uses: docker/login-action@v2.1.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PAT }}
+
+      - name: "Minimus registry auth"
+        run: docker login -u minimus -p ${{ secrets.MINIMUS_TOKEN }} reg.mini.dev
+        
+      - name: Docker Scout
+        id: docker-scout
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: docker/scout-action@v1
+        with:
+          command: compare
+          image: reg.mini.dev/nginx:latest
+          to: library/nginx:latest
+          ignore-unchanged: true
