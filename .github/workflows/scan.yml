@@ -18,7 +18,9 @@ env:
 
 jobs:
   build:
-
+    strategy:
+      matrix: 
+        image: [nginx,mysql,jenkins,wordpress,python,node]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -37,12 +39,12 @@ jobs:
       - name: "Minimus registry auth"
         run: docker login -u minimus -p ${{ secrets.MINIMUS_TOKEN }} reg.mini.dev
         
-      - name: Docker Scout
+      - name: Compare Images
         id: docker-scout
         uses: docker/scout-action@v1
         with:
           command: compare
-          image: reg.mini.dev/nginx:latest
-          to: library/nginx:latest
+          image: reg.mini.dev/${{ matrix.image }}:latest
+          to: library/${{ matrix.image }}:latest
           ignore-unchanged: true
           format: markdown
