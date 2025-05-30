@@ -17,10 +17,10 @@ env:
   COMPARE_TAG: latest
 
 jobs:
-  build:
+  scan:
     strategy:
       matrix: 
-        image: [nginx,mysql,jenkins,wordpress,python,node]
+        image: [nginx,mysql,wordpress,python,node]
     runs-on: ubuntu-latest
     permissions:
       contents: read
