@@ -45,3 +45,4 @@ jobs:
           image: reg.mini.dev/nginx:latest
           to: library/nginx:latest
           ignore-unchanged: true
+          format: markdown
