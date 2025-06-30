@@ -44,3 +44,4 @@ jobs:
           to: library/${{ matrix.image }}:latest
           ignore-unchanged: true
           format: markdown
+          only-package-types: rpm,deb,apk,pypi,npm
